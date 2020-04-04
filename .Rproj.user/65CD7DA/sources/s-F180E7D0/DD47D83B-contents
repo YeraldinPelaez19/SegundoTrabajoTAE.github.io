@@ -1,0 +1,550 @@
+# {.tabset .tabset-fade .tabset-pills}
+## Punto 4
+Generar un conjunto de datos simulados de dos clases con 100 observaciones y dos características en las que hay una separación visible pero no lineal entre las dos clases. Muestra que, en este escenario, un vector de apoyo máquina con un núcleo polinómico (con un grado superior a 1) o una El núcleo radial superará al clasificador de vectores de apoyo en la formación datos. ¿Qué técnica funciona mejor con los datos de la prueba? Haga y reportar las tasas de error de entrenamiento y pruebas para respaldar sus afirmaciones.
+
+Conjunto de datos simulados de dos clases con 100 observaciones y dos características en las que hay una separación visible pero no lineal entre las dos clases:
+
+```{r}
+library(e1071)
+set.seed(19)
+x <- rnorm(100)
+y <- 4 * x^2 + 1 + rnorm(100)
+class <- sample(100, 50)
+y[class] <- y[class] + 3
+y[-class] <- y[-class] - 3
+plot(x[class], y[class], col = "red", xlab = "X", ylab = "Y", ylim = c(-6, 30))
+points(x[-class], y[-class], col = "blue")
+```
+
+Se ajusta un modelo clasificador de vector de soporte en los datos obtenidos en el conjunto de entrenamiento:
+
+```{r}
+z <- rep(-1, 100)
+z[class] <- 1
+data <- data.frame(x = x, y = y, z = as.factor(z))
+train <- sample(100, 50)
+data.train <- data[train, ]
+data.test <- data[-train, ]
+svm.linear <- svm(z ~ ., data = data.train, kernel = "linear", cost = 10)
+plot(svm.linear, data.train)
+```
+
+```{r}
+table(predict = predict(svm.linear, data.train), truth = data.train$z)
+```
+
+Se observa que el clasificador de vectores de soporte comete 7 errores en los datos de entrenamiento.
+
+Luego, se procede a ajustar una máquina de vectores de soporte con un núcleo polinomial, se obtiene: 
+
+```{r}
+svm.poly <- svm(z ~ ., data = data.train, kernel = "polynomial", cost = 10)
+plot(svm.poly, data.train)
+```
+
+```{r}
+table(predict = predict(svm.poly, data.train), truth = data.train$z)
+```
+
+En este caso, se observa que la máquina de vectores de soporte con un núcleo polinomial de grado 3 comete 7 errores en los datos de entrenamiento.
+
+Finalmente se ajusta una máquina de vectores de soporte con un núcleo radial y una gamma de 1, los resultados son:
+
+```{r}
+svm.radial <- svm(z ~ ., data = data.train, kernel = "radial", gamma = 1, cost = 10)
+plot(svm.radial, data.train)
+```
+
+```{r}
+table(predict = predict(svm.radial, data.train), truth = data.train$z)
+```
+
+Ahora se observa que la máquina de vectores de soporte con un kernel radial comete 0 errores en los datos de entrenamiento.
+
+Entonces se verifica cómo funcionan estos modelos cuando se aplican a los datos de prueba.
+
+```{r}
+plot(svm.linear, data.test)
+```
+
+```{r}
+table(predict = predict(svm.linear, data.test), truth = data.test$z)
+```
+
+```{r}
+plot(svm.poly, data.test)
+```
+
+```{r}
+table(predict = predict(svm.poly, data.test), truth = data.test$z)
+```
+
+```{r}
+plot(svm.radial, data.test)
+```
+
+```{r}
+table(predict = predict(svm.radial, data.test), truth = data.test$z)
+```
+
+Asi se puede observar que las máquinas de vectores de soporte lineal, polinomial y radial clasifican, respectivamente, 7, 7 y 1 observaciones de forma incorrecta.
+
+Entonces se concluye que el kernel radial es el mejor modelo para esta configuración.
+
+## Punto 5
+Hemos visto que podemos encajar un SVM con un kernel no lineal para para realizar la clasificación utilizando un límite de decisión no lineal ahora vemos que también podemos obtener un límite de decisión no lineal por realizando una regresión logística utilizando transformaciones no lineales de las características.
+
+**(a)** Generar un conjunto de datos con n = 500 y p = 2, de manera que las observaciones pertenecen a dos clases con un límite de decisión cuadrático entre ellos. Por ejemplo, puedes hacer esto de la siguiente manera:
+
+ x1=runif (500) -0.5
+ x2=runif (500) -0.5
+ y=1*(x1^2-x2^2 > 0)
+ 
+```{r}
+set.seed(19)
+x1 <- runif(500) - 0.5
+x2 <- runif(500) - 0.5
+y <- 1 * (x1^2 - x2^2 > 0)
+```
+ 
+**(b)** Trazar las observaciones, coloreadas según sus etiquetas de clase.
+Su gráfico debe mostrar X1 en el eje x, y X2 en el eje y.
+
+```{r}
+plot(x1, x2, xlab = "X1", ylab = "X2", col = (4 - y), pch = (3 - y))
+```
+
+
+**(c)** Ajustar un modelo de regresión logística a los datos, utilizando X1 y X2 como predictores.
+
+```{r}
+logit.fit <- glm(y ~ x1 + x2, family = "binomial")
+summary(logit.fit)
+```
+
+Para el modelo de regresión logística ninguna variable parece ser estadisticamente significativa.
+
+**(d)** Aplicar este modelo a los datos de capacitación a fin de obtener una predicción etiqueta de clase para cada observación de entrenamiento. Traza las observaciones, de acuerdo con las etiquetas de clase predichas. El límite de decisión debe ser lineal.
+
+```{r}
+data <- data.frame(x1 = x1, x2 = x2, y = y)
+probs <- predict(logit.fit, data, type = "response")
+preds <- rep(0, 500)
+preds[probs > 0.47] <- 1
+plot(data[preds == 1, ]$x1, data[preds == 1, ]$x2, col = (4 - 1), pch = (3 - 1), xlab = "X1", ylab = "X2")
+points(data[preds == 0, ]$x1, data[preds == 0, ]$x2, col = (4 - 0), pch = (3 - 0))
+```
+
+Para este modelo, el limite de decisión parece ser lineal.
+
+**(e)** Ahora ajuste un modelo de regresión logística a los datos utilizando la técnica no lineal funciones de X1 y X2 como predictores (por ejemplo, X2 1, X1×X2, log(X2), y así sucesivamente).
+
+```{r}
+logitnl.fit <- glm(y ~ poly(x1, 2) + poly(x2, 2) + I(x1 * x2), family = "binomial")
+```
+
+```{r}
+summary(logitnl.fit)
+```
+
+Para el modelo de regresión logística utilizando la técnica no lineal nuevamente ninguna variable parece ser estadisticamente significativa.
+
+**(f)** Aplicar este modelo a los datos de entrenamiento para obtener una predicción etiqueta de clase para cada observación de entrenamiento. Traza las observaciones, de acuerdo con las etiquetas de clase predichas. El límite de decisión debería ser obviamente no lineal. Si no lo es, entonces repita (a)-(e) hasta que llegue a un ejemplo en el que las etiquetas de clase predichas son obviamente no lineales.
+
+```{r}
+probs <- predict(logitnl.fit, data, type = "response")
+preds <- rep(0, 500)
+preds[probs > 0.47] <- 1
+plot(data[preds == 1, ]$x1, data[preds == 1, ]$x2, col = (4 - 1), pch = (3 - 1), xlab = "X1", ylab = "X2")
+points(data[preds == 0, ]$x1, data[preds == 0, ]$x2, col = (4 - 0), pch = (3 - 0))
+```
+
+Acá se observa que el límite de decisión no lineal es similar al límite de decisión real.
+
+**(g)** Ajustar un clasificador de vectores de apoyo a los datos con X1 y X2 como predictores. Obtener una predicción de clase para cada observación de entrenamiento. Trazar las observaciones, coloreadas de acuerdo con la predicción etiquetas de clase.
+
+```{r}
+data$y <- as.factor(data$y)
+svm.fit <- svm(y ~ x1 + x2, data, kernel = "linear", cost = 0.01)
+preds <- predict(svm.fit, data)
+plot(data[preds == 0, ]$x1, data[preds == 0, ]$x2, col = (4 - 0), pch = (3 - 0), xlab = "X1", ylab = "X2")
+points(data[preds == 1, ]$x1, data[preds == 1, ]$x2, col = (4 - 1), pch = (3 - 1))
+```
+
+Luego, ajustando un clasificador de vectores de apoyo a los datos, se observa que clasifica todos los puntos en una sola clase.
+
+**(h)** Ajustar un SVM usando un kernel no lineal a los datos. Obtener una clase predicción para cada observación de entrenamiento. Traza las observaciones, de acuerdo con las etiquetas de clase predichas.
+
+```{r}
+data$y <- as.factor(data$y)
+svmnl.fit <- svm(y ~ x1 + x2, data, kernel = "radial", gamma = 1)
+preds <- predict(svmnl.fit, data)
+plot(data[preds == 0, ]$x1, data[preds == 0, ]$x2, col = (4 - 0), pch = (3 - 0), xlab = "X1", ylab = "X2")
+points(data[preds == 1, ]$x1, data[preds == 1, ]$x2, col = (4 - 1), pch = (3 - 1))
+```
+
+Asi nuevamente, se concluye que el límite de decisión no lineal es similar al límite de decisión real.
+
+**(i)** Comente sus resultados.
+
+Como conclusión general, se puede decir que tanto un SVM usando un kernel no lineal como la regresión logística usando los terminos de interacción parecen ser igual de acertados para encontrar los limites de desición no lineales, a pesar de esto el SVM posee un argumento más a favor y es que requiere ajuste manualpara hallar los terminos de interacción correctos cuando se usa regresión logística, pues solo se necesita hallar gamma.
+
+## Punto 6
+Al final de la sección 9.6.1, se afirma que en el caso de los datos que es apenas linealmente separable, un clasificador de vectores de apoyo con un pequeño valor de costo que clasifica erróneamente un par de observaciones de entrenamiento puede tener un mejor rendimiento en los datos de las pruebas que uno con un enorme valor de costo que no clasifica erróneamente ninguna observación de entrenamiento. Ahora investigue esta demanda.
+
+**(a)** Generar datos de dos clases con p = 2 de tal manera que las clases son apenas linealmente separables.
+
+El primer paso es generar 1000 puntos de manera dispersa a través de la linea x=y con una margen amplia. Adicionalemnte se hace la creación de "noisy points" a lo largo de la linea 5x − 4y − 50 = 0, la función de estos puntos es hacer las clases apenas separables, además de cambiar el clasificador de margen máximo.
+
+```{r}
+set.seed(19)
+x.one <- runif(500, 0, 90)
+y.one <- runif(500, x.one + 10, 100)
+x.one.noise <- runif(50, 20, 80)
+y.one.noise <- 5/4 * (x.one.noise - 10) + 0.1
+
+x.zero <- runif(500, 10, 100)
+y.zero <- runif(500, 0, x.zero - 10)
+x.zero.noise <- runif(50, 20, 80)
+y.zero.noise <- 5/4 * (x.zero.noise - 10) - 0.1
+
+class.one <- seq(1, 550)
+x <- c(x.one, x.one.noise, x.zero, x.zero.noise)
+y <- c(y.one, y.one.noise, y.zero, y.zero.noise)
+
+plot(x[class.one], y[class.one], col = "blue", pch = "+", ylim = c(0, 100))
+points(x[-class.one], y[-class.one], col = "red", pch = 4)
+```
+
+
+**(b)** Calcular las tasas de error de validación cruzada para el vector de apoyo clasificadores con un rango de valores de costo. ¿Cuántos errores de entrenamiento se clasifican erróneamente para cada valor de costo considerado, y cómo se relaciona esto con los errores de validación cruzada obtenidos?
+
+```{r}
+set.seed(192)
+z <- rep(0, 1100)
+z[class.one] <- 1
+data <- data.frame(x = x, y = y, z = as.factor(z))
+tune.out <- tune(svm, z ~ ., data = data, kernel = "linear", ranges = list(cost = c(0.01, 0.1, 1, 5, 10, 100, 1000, 10000)))
+summary(tune.out)
+```
+
+Se observa que un costo de 10000 parece ser la mejor opción para el parámetro.
+
+```{r}
+data.frame(cost = tune.out$performance$cost, misclass = tune.out$performance$error * 1100)
+```
+
+Lo obtenido confirma que un costo de 10000 clasifica todos los puntos de entrenamiento de manera correcta.
+
+**(c)** Generar un conjunto de datos de prueba apropiado, y calcular la prueba errores correspondientes a cada uno de los valores de costo considerados. ¿Qué valor de coste conduce a la menor cantidad de errores de prueba, y cómo ¿se compara esto con los valores de costo que producen menos errores de entrenamiento y la menor cantidad de errores de validación cruzada?
+
+```{r}
+x.test <- runif(1000, 0, 100)
+class.one <- sample(1000, 500)
+y.test <- rep(NA, 1000)
+# Set y > x for class.one
+for (i in class.one) {
+    y.test[i] <- runif(1, x.test[i], 100)
+}
+# set y < x for class.zero
+for (i in setdiff(1:1000, class.one)) {
+    y.test[i] <- runif(1, 0, x.test[i])
+}
+plot(x.test[class.one], y.test[class.one], col = "blue", pch = "+")
+points(x.test[-class.one], y.test[-class.one], col = "red", pch = 4)
+```
+
+```{r}
+set.seed(193)
+z.test <- rep(0, 1000)
+z.test[class.one] <- 1
+data.test <- data.frame(x = x.test, y = y.test, z = as.factor(z.test))
+costs <- c(0.01, 0.1, 1, 5, 10, 100, 1000, 10000)
+test.err <- rep(NA, length(costs))
+for (i in 1:length(costs)) {
+    svm.fit <- svm(z ~ ., data = data, kernel = "linear", cost = costs[i])
+    pred <- predict(svm.fit, data.test)
+    test.err[i] <- sum(pred != data.test$z)
+}
+data.frame(cost = costs, misclass = test.err)
+```
+
+Finalmente se puede concluir que los costos 1 y 5 parecen funcionar mejor en las observaciones de prueba, esto es mucho menor que el valor de 10000 para las observaciones de entrenamiento.
+
+**(d)** Discuta sus resultados.
+
+En este caso se esta observando un sobreajuste en los datos para el kernel lineal, pues un valor alto asociado al costo intenta clasificar de manera correcta los "noisy-points" y por esto se evidencia un sobreajuste. Sin embargo, un valor bajo asociado al costo arroja errores en los "noisy-points" y hace que estos funcionen mejor en los datos de prueba.
+
+
+
+## Punto 7
+En este problema, se utilizarán los enfoques de los vectores de apoyo a fin de predecir si un coche determinado tiene un alto o bajo kilometraje de gasolina basado en la Conjunto de datos automático.
+
+**(a)** Crear una variable binaria que toma un 1 para los coches con gasolina el kilometraje por encima de la mediana, y un 0 para los coches con kilometraje de gasolina por debajo de la media.
+
+```{r}
+library(ISLR)
+var <- ifelse(Auto$mpg > median(Auto$mpg), 1, 0)
+Auto$mpglevel <- as.factor(var)
+```
+
+**(b)** Ajustar un clasificador de vectores de apoyo a los datos con diversos valores del costo, para predecir si un coche tiene alta o baja gasolina kilometraje. Reporte los errores de validación cruzada asociados con diferentes valores de este parámetro. Comente sus resultados.
+
+```{r}
+set.seed(19)
+tune.out <- tune(svm, mpglevel ~ ., data = Auto, kernel = "linear", ranges = list(cost = c(0.01, 0.1, 1, 5, 10, 100, 1000)))
+summary(tune.out)
+```
+De lo anterior, el costo 1 parecer ser el que mejor funcione.
+
+**(c)** Ahora repita (b), esta vez usando SVM con radial y polinomio con diferentes valores de gamma y grado y costo. Comente sus resultados.
+
+```{r}
+set.seed(19)
+tune.out <- tune(svm, mpglevel ~ ., data = Auto, kernel = "polynomial", ranges = list(cost = c(0.01, 0.1, 1, 5, 10, 100), degree = c(2, 3, 4)))
+summary(tune.out)
+```
+
+Acá se oberva que para un kernel polinomial, el error de validación cruzada más bajo se obtiene para un grado de 2 y un costo de 100.
+
+```{r}
+set.seed(19)
+tune.out <- tune(svm, mpglevel ~ ., data = Auto, kernel = "radial", ranges = list(cost = c(0.01, 0.1, 1, 5, 10, 100), gamma = c(0.01, 0.1, 1, 5, 10, 100)))
+summary(tune.out)
+```
+Y acá se observaque para un kernel radial, el error de validación cruzada más bajo se obtiene para una gamma de 0.01 y un costo de 100.
+
+**(d)** Haga algunas tramas para respaldar sus afirmaciones en (b) y (c). 
+Sugerencia: En el laboratorio, usamos la función plot() para los objetos svm sólo en los casos con p = 2. Cuando p > 2, puedes usar la gráfica() para crear gráficos que muestren pares de variables a la vez. Esencialmente, en lugar de escribir.
+
+
+```{r}
+svm.linear <- svm(mpglevel ~ ., data = Auto, kernel = "linear", cost = 1)
+svm.poly <- svm(mpglevel ~ ., data = Auto, kernel = "polynomial", cost = 100, degree = 2)
+svm.radial <- svm(mpglevel ~ ., data = Auto, kernel = "radial", cost = 100, gamma = 0.01)
+plotpairs = function(fit) {
+    for (name in names(Auto)[!(names(Auto) %in% c("mpg", "mpglevel", "name"))]) {
+        plot(fit, Auto, as.formula(paste("mpg~", name, sep = "")))
+    }
+}
+plotpairs(svm.linear)
+```
+
+```{r}
+plotpairs(svm.poly)
+```
+
+```{r}
+plotpairs(svm.radial)
+```
+
+
+## Punto 8
+Este problema involucra el conjunto de datos del OJ que es parte del ISLR paquete.
+
+**(a)** Cree un conjunto de entrenamiento que contenga una muestra aleatoria de 800 observaciones y un conjunto de prueba que contenga las observaciones restantes.
+
+```{r}
+set.seed(19)
+train <- sample(nrow(OJ), 800)
+OJ.train <- OJ[train, ]
+OJ.test <- OJ[-train, ]
+```
+
+**(b)** Ajuste un clasificador de vector de soporte a los datos de entrenamiento usando cost = 0.01, con Purchase como respuesta y las otras variables como predictores. Use la función summary() para generar estadísticas resumidas y describir los resultados obtenidos.
+
+```{r}
+svm.linear <- svm(Purchase ~ ., data = OJ.train, kernel = "linear", cost = 0.01)
+summary(svm.linear)
+```
+
+Al ajustar un clasificador de vector de soporte para los datos de entrenamiento, se observa que este crea 443 vectores de soporte de 800 puntos de entrenamiento. De estos, 222 pertenecen al nivel MM y los 221 restantes pertenecen al nivel CH.
+
+**(c)** ¿Cuáles son las tasas de error de entrenamiento y prueba?
+
+```{r}
+train.pred <- predict(svm.linear, OJ.train)
+table(OJ.train$Purchase, train.pred)
+```
+
+```{r}
+(78 + 55) / (439 + 228 + 78 + 55)
+```
+
+```{r}
+test.pred <- predict(svm.linear, OJ.test)
+table(OJ.test$Purchase, test.pred)
+```
+
+```{r}
+(31 + 18) / (141 + 80 + 31 + 18)
+```
+
+La tase de error para el conjunto de entrenamiento es de aproximadamente 16.6%
+
+La tasa de error para el conjunto de prueba es de aproximadamente 18.1%.
+
+**(d)** Use la función tune() para seleccionar un costo óptimo. Considere valores en el rango de 0.01 a 10.
+
+```{r}
+set.seed(192)
+tune.out <- tune(svm, Purchase ~ ., data = OJ.train, kernel = "linear", ranges = list(cost = 10^seq(-2, 1, by = 0.25)))
+summary(tune.out)
+```
+
+En este caso, se obtiene que el costo óptimo que se encuentra entre los valores 0.01 y 10 es 0.056.
+
+**(e)** Calcule las tasas de error de capacitación y prueba utilizando este nuevo valor de costo.
+
+```{r}
+svm.linear <- svm(Purchase ~ ., kernel = "linear", data = OJ.train, cost = tune.out$best.parameter$cost)
+train.pred <- predict(svm.linear, OJ.train)
+table(OJ.train$Purchase, train.pred)
+```
+
+```{r}
+(71 + 56) / (438 + 235 + 71 + 56)
+```
+
+```{r}
+test.pred <- predict(svm.linear, OJ.test)
+table(OJ.test$Purchase, test.pred)
+```
+
+```{r}
+(32 + 19) / (140 + 79 + 32 + 19)
+```
+
+Utilizando el nuevo valor del costo optimo se obtiene que:
+
+La tase de error para el conjunto de entrenamiento es de aproximadamente 15.9%
+
+La tasa de error para el conjunto de prueba es de aproximadamente 18.9%.
+
+**(f)** Repita las partes (b) a (e) usando una máquina de vectores de soporte con un núcleo radial. Use el valor predeterminado para gamma.
+
+```{r}
+svm.radial <- svm(Purchase ~ ., kernel = "radial", data = OJ.train)
+summary(svm.radial)
+```
+
+```{r}
+train.pred <- predict(svm.radial, OJ.train)
+table(OJ.train$Purchase, train.pred)
+```
+
+```{r}
+(77 + 39) / (455 + 229 + 77 + 39)
+```
+
+```{r}
+test.pred <- predict(svm.radial, OJ.test)
+table(OJ.test$Purchase, test.pred)
+```
+
+```{r}
+(28 + 18) / (141 + 83 + 28 + 18)
+```
+
+Ahora, usando un kernel radial con gamma predeterminado se obtiene un vector que crea 384 vectores de soporte, de los cuales 188 pertenecen al nivel CH y los 196 restantes pertenecen al nivel MM. 
+
+El clasificador tiene un error de entrenamiento del 14,5% y un error de prueba del 17%, que es una ligera mejora con respecto al kernel lineal. Ahora usamos validación cruzada para encontrar el costo óptimo.
+
+```{r}
+set.seed(192)
+tune.out <- tune(svm, Purchase ~ ., data = OJ.train, kernel = "radial", ranges = list(cost = 10^seq(-2, 
+    1, by = 0.25)))
+summary(tune.out)
+```
+
+```{r}
+svm.radial <- svm(Purchase ~ ., kernel = "radial", data = OJ.train, cost = tune.out$best.parameter$cost)
+summary(svm.radial)
+```
+
+```{r}
+train.pred <- predict(svm.radial, OJ.train)
+table(OJ.train$Purchase, train.pred)
+```
+
+```{r}
+(77 + 39) / (455 + 229 + 77 + 39)
+```
+
+```{r}
+test.pred <- predict(svm.radial, OJ.test)
+table(OJ.test$Purchase, test.pred)
+```
+
+```{r}
+(28 + 18) / (141 + 83 + 28 + 18)
+```
+
+Entonces, se observa que el ajuste no reduce las tasas de error de entrenamiento y prueba, ya que se está usando el costo óptimo de 1.
+
+**(g)** Repita las partes (b) a (e) usando una máquina de vectores de soporte con un kernel polinomial. Use degree=2
+
+```{r}
+svm.poly <- svm(Purchase ~ ., kernel = "polynomial", data = OJ.train, degree = 2)
+summary(svm.poly)
+```
+
+```{r}
+train.pred <- predict(svm.poly, OJ.train)
+table(OJ.train$Purchase, train.pred)
+```
+
+```{r}
+(105 + 33) / (461 + 201 + 105 + 33)
+```
+
+```{r}
+test.pred <- predict(svm.poly, OJ.test)
+table(OJ.test$Purchase, test.pred)
+```
+
+```{r}
+(41 + 10) / (149 + 70 + 41 + 10)
+```
+
+Ahora, usando un kernel radial con gamma predeterminado se obtiene un vector que crea 463 vectores de soporte, de los cuales, 224 afectados al nivel CH y los 239 restantes al nivel MM. 
+
+El clasificador tiene un error de entrenamiento del 17.2% y un error de prueba del 18.8%, lo que no mejora el kernel lineal. Ahora usamos validación cruzada para encontrar el costo óptimo.
+
+```{r}
+set.seed(192)
+tune.out <- tune(svm, Purchase ~ ., data = OJ.train, kernel = "polynomial", degree = 2, ranges = list(cost = 10^seq(-2, 
+    1, by = 0.25)))
+summary(tune.out)
+```
+
+```{r}
+svm.poly <- svm(Purchase ~ ., kernel = "polynomial", degree = 2, data = OJ.train, cost = tune.out$best.parameter$cost)
+summary(svm.poly)
+```
+
+```{r}
+train.pred <- predict(svm.poly, OJ.train)
+table(OJ.train$Purchase, train.pred)
+```
+
+```{r}
+(72 + 44) / (450 + 234 + 72 + 44)
+```
+
+```{r}
+test.pred <- predict(svm.poly, OJ.test)
+table(OJ.test$Purchase, test.pred)
+```
+
+```{r}
+(31 + 19) / (140 + 80 + 31 + 19)
+```
+Finalmente, se tiene que el ajuste reduce las tasas de error tanto el conjunto de entrenamiento, como del conjunto de prueba.
+
+**(h)** En general, ¿qué enfoque parece dar los mejores resultados con estos datos?
+
+
+En general, el kernel de base radial parece estar produciendo un error mínimo de clasificación errónea en los datos de entrenamiento y de prueba.
+
+

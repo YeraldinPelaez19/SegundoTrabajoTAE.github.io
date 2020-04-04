@@ -1,0 +1,20 @@
+---
+title: "Segundo Trabajo TAE"
+---
+
+Yeraldin Peláez Cano - 1040748438
+
+
+Esta pagina contiene el desarrollo del segundo trabajo correspondiente a la asignatura Tecnicas en Aprendizaje Estadístico, a continuación en la pestaña "Home" se visualiza el nombre del autor y el ensayo sobre como dar solución a la calidad del aire en Medellín. En las demas pestañas se dan solución a los ejercicios propuestos de acuerdo a cada sección del texto guía.
+
+**Ensayo- Cómo desde el aprendizaje estadístico se puede contribuir a solucionar el problema de la calidad del aire en Medellín**
+
+Una definición apropiada para la contaminación del aire es la presencia en la atmósfera de materia o sustancias que pueden implicar daños para la salud o la seguridad de las personas en general, el índice de calidad del aire se basa en la medición de partículas           (PM2.5 y PM10), ozono (O3), dióxido de nitrógeno (NO2), emisiones de dióxido de azufre  (SO2) y monóxido de carbono (CO) emitidas, captadas en estaciones cuyo único objetivo es realizar dicha medición, esta información posteriormente permite obtener una idea sobre la situación del aire en el territorio nacional.
+
+Según la Organización Mundial de la Salud (OMS) la contaminación del aire actualmente representa uno de los mayores riesgos medioambientales para la salud de todos, destaca entre las principales causas fuentes de emisión de los contaminantes atmosféricos como el transporte, con el foco principal en las ciudades, el consumo energético poco eficiente en las viviendas, la generación de electricidad con combustibles contaminantes y la falta de tratamiento de los residuos industriales y agrícolas.
+
+En la ciudad de Medellín particularmente, el índice de la calidad de aire es monitoreado por el Sistema de alerta temprana SIATA, debido al fenómeno de estabilidad atmosférica, generado por las condiciones climáticas y topográficas en el Valle de Aburrá, en los últimos años la región ha experimentado una contingencia atmosférica caracterizada por niveles de contaminación perjudiciales para la salud, reportados en las estaciones de medición de dicha región.
+
+Desde el campo de la estadística, podría llegarse a plantear alternativas que den solución a las problemáticas que actualmente se presentan en Medellín, una de ellas es el desarrollo de estadísticas ambientales  que permitan integrar y transformar datos y estadísticas básicas sobre los fenómenos ambientales y las interacciones del ambiente con la sociedad, que permitirán construir otras operaciones estadísticas como los indicadores y/o cuentas ambientales, estas últimas permiten obtener información económico ambiental de una región en particular, y en diferentes áreas como agricultura, manufacturas, comercio, transporte, o por sectores institucionales como industrias, hogares y gobierno.
+
+Sin embargo, no está de más subrayar que se trata de un problema tan importante como el cambio climático y con efectos adversos más inmediatos, cuya solución requiere de la colaboración de todos para ser mitigado.

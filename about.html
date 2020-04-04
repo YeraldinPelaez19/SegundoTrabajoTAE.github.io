@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title></title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Secciones</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="tae.html">4.7.2</a>
+</li>
+<li>
+  <a href="about.html">8.4</a>
+</li>
+<li>
+  <a href="bod.html">9.7.2</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+
+<div id="section" class="section level1 tabset tabset-fade tabset-pills">
+<h1></h1>
+<div id="punto-7" class="section level2">
+<h2>Punto 7</h2>
+<p>En el laboratorio, aplicamos bosques aleatorios a los datos de Boston usando mtry=6 y usando ntree=25 y ntree=500. Crear un gráfico que muestre la prueba error resultante de los bosques aleatorios en este conjunto de datos para un rango de valores para mtry y ntree. Puedes modelar tu trazar después de la figura 8.10. Describa los resultados obtenidos.</p>
+<pre class="r"><code>library(MASS)
+library(randomForest)</code></pre>
+<pre><code>## Warning: package &#39;randomForest&#39; was built under R version 3.6.3</code></pre>
+<pre><code>## randomForest 4.6-14</code></pre>
+<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre class="r"><code>set.seed(19)
+train &lt;- sample(1:nrow(Boston), nrow(Boston) / 2)
+Boston.train &lt;- Boston[train, -14]
+Boston.test &lt;- Boston[-train, -14]
+Y.train &lt;- Boston[train, 14]
+Y.test &lt;- Boston[-train, 14]
+rf.boston1 &lt;- randomForest(Boston.train, y = Y.train, xtest = Boston.test, ytest = Y.test, mtry = ncol(Boston) - 1, ntree = 500)
+rf.boston2 &lt;- randomForest(Boston.train, y = Y.train, xtest = Boston.test, ytest = Y.test, mtry = (ncol(Boston) - 1) / 2, ntree = 500)
+rf.boston3 &lt;- randomForest(Boston.train, y = Y.train, xtest = Boston.test, ytest = Y.test, mtry = sqrt(ncol(Boston) - 1), ntree = 500)
+plot(1:500, rf.boston1$test$mse, col = &quot;green&quot;, type = &quot;l&quot;, xlab = &quot;Number of Trees&quot;, ylab = &quot;Test MSE&quot;, ylim = c(10, 19))
+lines(1:500, rf.boston2$test$mse, col = &quot;red&quot;, type = &quot;l&quot;)
+lines(1:500, rf.boston3$test$mse, col = &quot;blue&quot;, type = &quot;l&quot;)
+legend(&quot;topright&quot;, c(&quot;m = p&quot;, &quot;m = p/2&quot;, &quot;m = sqrt(p)&quot;), col = c(&quot;green&quot;, &quot;red&quot;, &quot;blue&quot;), cex = 1, lty = 1)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="punto-8" class="section level2">
+<h2>Punto 8</h2>
+<p>En el laboratorio, se aplicó un árbol de clasificación al conjunto de datos de Carseats después de convirtiendo a Sales en una variable de respuesta cualitativa. Ahora vamos a tratan de predecir las Sales utilizando árboles de regresión y enfoques relacionados, tratando la respuesta como una variable cuantitativa.</p>
+<p><strong>(a)</strong> Dividir el conjunto de datos en un conjunto de entrenamiento y un conjunto de pruebas.</p>
+<pre class="r"><code>library(ISLR)</code></pre>
+<pre><code>## Warning: package &#39;ISLR&#39; was built under R version 3.6.3</code></pre>
+<pre class="r"><code>set.seed(19)
+train &lt;- sample(1:nrow(Carseats), nrow(Carseats) / 2)
+Carseats.train &lt;- Carseats[train, ]
+Carseats.test &lt;- Carseats[-train, ]</code></pre>
+<p><strong>(b)</strong> Ajustar un árbol de regresión al conjunto de entrenamiento. Trazar el árbol e interpretar los resultados. ¿Qué prueba de MSE obtiene?</p>
+<pre class="r"><code>library(tree)</code></pre>
+<pre><code>## Warning: package &#39;tree&#39; was built under R version 3.6.3</code></pre>
+<pre class="r"><code>tree.carseats &lt;- tree(Sales ~ ., data = Carseats.train)
+summary(tree.carseats)</code></pre>
+<pre><code>## 
+## Regression tree:
+## tree(formula = Sales ~ ., data = Carseats.train)
+## Variables actually used in tree construction:
+## [1] &quot;ShelveLoc&quot; &quot;Price&quot;     &quot;CompPrice&quot; &quot;Age&quot;      
+## Number of terminal nodes:  16 
+## Residual mean deviance:  2.32 = 427 / 184 
+## Distribution of residuals:
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## -3.2480 -1.0210 -0.1413  0.0000  1.1910  3.5220</code></pre>
+<pre class="r"><code>plot(tree.carseats)
+text(tree.carseats, pretty = 0)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>yhat &lt;- predict(tree.carseats, newdata = Carseats.test)
+mean((yhat - Carseats.test$Sales)^2)</code></pre>
+<pre><code>## [1] 4.770719</code></pre>
+<p>En este caso para el árbol de regresión generado por el conjunto de entrenamiento se obtuvo un MSE de aproximadamente 4.77</p>
+<p><strong>(c)</strong> Utilizar la validación cruzada para determinar el nivel óptimo de la complejidad de los árboles. ¿La poda del árbol mejora la prueba de MSE?</p>
+<pre class="r"><code>cv.carseats &lt;- cv.tree(tree.carseats)
+plot(cv.carseats$size, cv.carseats$dev, type = &quot;b&quot;)
+tree.min &lt;- which.min(cv.carseats$dev)
+points(tree.min, cv.carseats$dev[tree.min], col = &quot;red&quot;, cex = 2, pch = 20)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>prune.carseats &lt;- prune.tree(tree.carseats, best = 4)
+plot(prune.carseats)
+text(prune.carseats, pretty = 0)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>En este caso, al utilizar validación cruzada se selecciona árbol de tamaño 4. Ahora, se procede a obtener el árbol de 4 nodos.</p>
+<pre class="r"><code>yhat &lt;- predict(prune.carseats, newdata = Carseats.test)
+mean((yhat - Carseats.test$Sales)^2)</code></pre>
+<pre><code>## [1] 5.920258</code></pre>
+<p>Luego podemos ver que reducir el árbol a 4 nodos aumenta el MSE a 5.92.</p>
+<p><strong>(d)</strong> Utilizar el método de embolsado para analizar estos datos. ¿Qué prueba de MSE que obtiene? Use la función importance() para determinar qué variables son más importantes.</p>
+<pre class="r"><code>bag.carseats &lt;- randomForest(Sales ~ ., data = Carseats.train, mtry = 10, ntree = 500, importance = TRUE)
+yhat.bag &lt;- predict(bag.carseats, newdata = Carseats.test)
+mean((yhat.bag - Carseats.test$Sales)^2)</code></pre>
+<pre><code>## [1] 2.749638</code></pre>
+<p>Se obeserva que el método de embolsado arroja un MSE de aproximadamente 2.75</p>
+<pre class="r"><code>importance(bag.carseats)</code></pre>
+<pre><code>##                %IncMSE IncNodePurity
+## CompPrice   17.9535142    116.375844
+## Income       8.1925904     84.118903
+## Advertising  7.1779240     73.687301
+## Population  -1.2087650     48.924221
+## Price       53.7332208    541.938533
+## ShelveLoc   60.6365592    577.747901
+## Age          8.4920020    102.669890
+## Education    1.2486245     46.453329
+## Urban       -1.2354633      6.286653
+## US          -0.4600501      7.311699</code></pre>
+<p>Ademas, se puede concluir que las variables “ShelveLoc” y “Price” son las mas importantes.</p>
+<p><strong>(e)</strong> Utilizar los bosques al azar para analizar estos datos. ¿Qué prueba de MSE obtener? Use la función importance() para determinar qué variables son muy importantes. Describa el efecto de m, el número de variables consideradas en cada división, en la tasa de error obtenido.</p>
+<pre class="r"><code>rf.carseats &lt;- randomForest(Sales ~ ., data = Carseats.train, mtry = 3, ntree = 500, importance = TRUE)
+yhat.rf &lt;- predict(rf.carseats, newdata = Carseats.test)
+mean((yhat.rf - Carseats.test$Sales)^2)</code></pre>
+<pre><code>## [1] 2.869527</code></pre>
+<p>En este caso, para m=sqrt(p) se obtiene un MSE de aproximadamente 2.87</p>
+<pre class="r"><code>importance(rf.carseats)</code></pre>
+<pre><code>##                %IncMSE IncNodePurity
+## CompPrice    8.5310035     136.89593
+## Income       4.5937746     120.97879
+## Advertising  6.9623908     114.52668
+## Population  -1.3721859      93.95397
+## Price       32.5543939     415.12381
+## ShelveLoc   38.8472128     411.96746
+## Age          6.5752614     142.46105
+## Education    2.4014860      75.62375
+## Urban       -0.1499908      13.95890
+## US           2.2171902      19.53415</code></pre>
+<p>Acá tambien se puede concluir que las variables “ShelveLoc” y “Price” son las mas importantes.</p>
+</div>
+<div id="punto-9" class="section level2">
+<h2>Punto 9</h2>
+<p>Este problema involucra al conjunto de datos del “OJ”&quot; que es parte del paquete ISLR .</p>
+<p><strong>(a)</strong> Crear un conjunto de entrenamiento que contenga una muestra aleatoria de 800 observaciones, y un conjunto de prueba que contenga las observaciones restantes.</p>
+<pre class="r"><code>set.seed(19)
+train &lt;- sample(1:nrow(OJ), 800)
+OJ.train &lt;- OJ[train, ]
+OJ.test &lt;- OJ[-train, ]</code></pre>
+<p><strong>(b)</strong> Ajustar un árbol a los datos de entrenamiento, con la respuesta “Purchase” y las otras variables como predictores. Utilice la función summary() para producir estadísticas resumidas sobre el árbol, y describir la resultados obtenidos. ¿Cuál es la tasa de error de entrenamiento? ¿Cuántos nodos terminales que tiene el árbol?</p>
+<pre class="r"><code>tree.oj &lt;- tree(Purchase ~ ., data = OJ.train)
+summary(tree.oj)</code></pre>
+<pre><code>## 
+## Classification tree:
+## tree(formula = Purchase ~ ., data = OJ.train)
+## Variables actually used in tree construction:
+## [1] &quot;LoyalCH&quot;        &quot;PriceDiff&quot;      &quot;ListPriceDiff&quot;  &quot;PctDiscMM&quot;     
+## [5] &quot;WeekofPurchase&quot;
+## Number of terminal nodes:  9 
+## Residual mean deviance:  0.7414 = 586.5 / 791 
+## Misclassification error rate: 0.1612 = 129 / 800</code></pre>
+<p>Se puede observar que el árbol ajustado posee 9 nodos terminales y una tasa de error de entrenamiento igual a 0.1612</p>
+<p><strong>(c)</strong> Escriba el nombre del objeto del árbol para obtener una descripción detallada salida de texto. Escoge uno de los nodos terminales, e interpreta la información que se muestra.</p>
+<pre class="r"><code>tree.oj</code></pre>
+<pre><code>## node), split, n, deviance, yval, (yprob)
+##       * denotes terminal node
+## 
+##  1) root 800 1075.00 CH ( 0.60250 0.39750 )  
+##    2) LoyalCH &lt; 0.482935 307  329.60 MM ( 0.22801 0.77199 )  
+##      4) LoyalCH &lt; 0.0356415 56    0.00 MM ( 0.00000 1.00000 ) *
+##      5) LoyalCH &gt; 0.0356415 251  297.10 MM ( 0.27888 0.72112 )  
+##       10) PriceDiff &lt; 0.31 192  196.50 MM ( 0.20833 0.79167 ) *
+##       11) PriceDiff &gt; 0.31 59   81.77 CH ( 0.50847 0.49153 )  
+##         22) LoyalCH &lt; 0.147456 7    0.00 MM ( 0.00000 1.00000 ) *
+##         23) LoyalCH &gt; 0.147456 52   70.85 CH ( 0.57692 0.42308 ) *
+##    3) LoyalCH &gt; 0.482935 493  440.50 CH ( 0.83570 0.16430 )  
+##      6) LoyalCH &lt; 0.764572 229  278.60 CH ( 0.70306 0.29694 )  
+##       12) ListPriceDiff &lt; 0.235 91  125.90 MM ( 0.47253 0.52747 )  
+##         24) PctDiscMM &lt; 0.196197 73  100.10 CH ( 0.56164 0.43836 )  
+##           48) WeekofPurchase &lt; 274.5 64   88.72 MM ( 0.50000 0.50000 ) *
+##           49) WeekofPurchase &gt; 274.5 9    0.00 CH ( 1.00000 0.00000 ) *
+##         25) PctDiscMM &gt; 0.196197 18   12.56 MM ( 0.11111 0.88889 ) *
+##       13) ListPriceDiff &gt; 0.235 138  114.20 CH ( 0.85507 0.14493 ) *
+##      7) LoyalCH &gt; 0.764572 264  103.60 CH ( 0.95076 0.04924 ) *</code></pre>
+<p>Escogemos el nodo etiquetado como 4, que es un nodo terminal debido al asterisco. El criterio de división es LoyalCH &lt;0.0356415, el número de observaciones en esa rama es igual a 56 con una desviación de 0 y una predicción general para la rama de MM. El 0% de las observaciones en esa rama toman el valor de CH, y el 100% restante toma el valor de MM.</p>
+<p><strong>(d)</strong> Crear un gráfico del árbol e interpretar los resultados.</p>
+<pre class="r"><code>plot(tree.oj)
+text(tree.oj, pretty = 0)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>Podemos ver que el indicador más importante de “Purchase” parece ser “Loyalch”, de hecho, los nodos superiores contienen “Loyalch”.</p>
+<p><strong>(e)</strong> Predecir la respuesta en los datos de la prueba, y producir una matriz de confusión que compara las etiquetas de las pruebas con las etiquetas de las pruebas previstas. ¿Cuál es la tasa de error de la prueba?</p>
+<pre class="r"><code>tree.pred &lt;- predict(tree.oj, OJ.test, type = &quot;class&quot;)
+table(tree.pred, OJ.test$Purchase)</code></pre>
+<pre><code>##          
+## tree.pred  CH  MM
+##        CH 139  23
+##        MM  32  76</code></pre>
+<pre class="r"><code>1 - (147 + 62) / 270</code></pre>
+<pre><code>## [1] 0.2259259</code></pre>
+<p>Podemos concluir que la tasa de error de la prueba es de aproximadamente 23%.</p>
+<p><strong>(f)</strong> Aplicar la función cv.tree() al conjunto de entrenamiento para determinar el tamaño óptimo del árbol.</p>
+<pre class="r"><code>cv.oj &lt;- cv.tree(tree.oj, FUN = prune.misclass)
+cv.oj</code></pre>
+<pre><code>## $size
+## [1] 9 8 5 2 1
+## 
+## $dev
+## [1] 170 170 167 171 318
+## 
+## $k
+## [1]       -Inf   0.000000   2.666667   4.666667 167.000000
+## 
+## $method
+## [1] &quot;misclass&quot;
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;prune&quot;         &quot;tree.sequence&quot;</code></pre>
+<p><strong>(g)</strong> Elaborar un gráfico con el tamaño del árbol en el eje x y la tasa de error de clasificación en la validación cruzada en el eje Y.</p>
+<pre class="r"><code>plot(cv.oj$size, cv.oj$dev, type = &quot;b&quot;, xlab = &quot;Tree size&quot;, ylab = &quot;Deviance&quot;)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><strong>(h)</strong> ¿Qué tamaño de árbol corresponde a la tasa de error de clasificación en la validación cruzada mas baja?</p>
+<p>Podemos ver que el árbol de 5 nodos es el árbol más pequeño con la tasa de error de clasificación más baja.</p>
+<p><strong>(i)</strong> Producir un árbol podado que corresponda al tamaño óptimo del árbol obtenido mediante validación cruzada. Si la validación cruzada no conduce a la selección de un árbol podado, luego crear un árbol podado con cinco nodos terminales.</p>
+<pre class="r"><code>prune.oj &lt;- prune.misclass(tree.oj, best = 5)
+plot(prune.oj)
+text(prune.oj, pretty = 0)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><strong>(j)</strong> Comparar las tasas de error de entrenamiento entre los podados y los no podados árboles. ¿Cuál es más alto?</p>
+<pre class="r"><code>summary(tree.oj)</code></pre>
+<pre><code>## 
+## Classification tree:
+## tree(formula = Purchase ~ ., data = OJ.train)
+## Variables actually used in tree construction:
+## [1] &quot;LoyalCH&quot;        &quot;PriceDiff&quot;      &quot;ListPriceDiff&quot;  &quot;PctDiscMM&quot;     
+## [5] &quot;WeekofPurchase&quot;
+## Number of terminal nodes:  9 
+## Residual mean deviance:  0.7414 = 586.5 / 791 
+## Misclassification error rate: 0.1612 = 129 / 800</code></pre>
+<pre class="r"><code>summary(prune.oj)</code></pre>
+<pre><code>## 
+## Classification tree:
+## snip.tree(tree = tree.oj, nodes = c(24L, 2L))
+## Variables actually used in tree construction:
+## [1] &quot;LoyalCH&quot;       &quot;ListPriceDiff&quot; &quot;PctDiscMM&quot;    
+## Number of terminal nodes:  5 
+## Residual mean deviance:  0.8303 = 660.1 / 795 
+## Misclassification error rate: 0.1713 = 137 / 800</code></pre>
+<p>La tasa de error de clasificación errónea es ligeramente mayor para el árbol podado (0.1713 frente a 0.1612).</p>
+<p><strong>(k)</strong> Comparar los índices de error de la prueba entre los podados y los no podados árboles. ¿Cuál es más alto?</p>
+<pre class="r"><code>prune.pred &lt;- predict(prune.oj, OJ.test, type = &quot;class&quot;)
+table(prune.pred, OJ.test$Purchase)</code></pre>
+<pre><code>##           
+## prune.pred  CH  MM
+##         CH 146  23
+##         MM  25  76</code></pre>
+<pre class="r"><code>1 - (119 + 81) / 270</code></pre>
+<pre><code>## [1] 0.2592593</code></pre>
+<p>Se concluye que pare este caso, el proceso de poda del árbol aumenta la tasa de error de prueba a aproximadamente 26%, pero arroja un árbol mucho más facil de interpretar.</p>
+</div>
+<div id="punto-10" class="section level2">
+<h2>Punto 10</h2>
+<p>Ahora usamos el aumento para predecir el Salary en el conjunto de datos de los Hitters.</p>
+<p><strong>(a)</strong> Eliminar las observaciones para las que la información de salarios es desconocida, y luego log-transformar los salarios.</p>
+<pre class="r"><code>Hitters &lt;- na.omit(Hitters)
+Hitters$Salary &lt;- log(Hitters$Salary)</code></pre>
+<p><strong>(b)</strong> Crear un conjunto de entrenamiento que consista en las primeras 200 observaciones, y un conjunto de pruebas que consiste en las observaciones restantes.</p>
+<pre class="r"><code>train &lt;- 1:200
+Hitters.train &lt;- Hitters[train, ]
+Hitters.test &lt;- Hitters[-train, ]</code></pre>
+<p><strong>(c)</strong> Realizar la potenciación del conjunto de entrenamiento con 1.000 árboles para un rango de valores del parámetro de contracción λ. Producir un gráfico con diferentes valores de contracción en el eje x y los correspondientes El entrenamiento fijó el MSE en el eje Y.</p>
+<pre class="r"><code>library(gbm)</code></pre>
+<pre><code>## Warning: package &#39;gbm&#39; was built under R version 3.6.3</code></pre>
+<pre><code>## Loaded gbm 2.1.5</code></pre>
+<pre class="r"><code>set.seed(19)
+pows &lt;- seq(-10, -0.2, by = 0.1)
+lambdas &lt;- 10^pows
+train.err &lt;- rep(NA, length(lambdas))
+for (i in 1:length(lambdas)) {
+    boost.hitters &lt;- gbm(Salary ~ ., data = Hitters.train, distribution = &quot;gaussian&quot;, n.trees = 1000, shrinkage = lambdas[i])
+    pred.train &lt;- predict(boost.hitters, Hitters.train, n.trees = 1000)
+    train.err[i] &lt;- mean((pred.train - Hitters.train$Salary)^2)
+}
+plot(lambdas, train.err, type = &quot;b&quot;, xlab = &quot;Shrinkage values&quot;, ylab = &quot;Training MSE&quot;)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p><strong>(d)</strong> Producir un gráfico con diferentes valores de contracción en el eje x y el correspondiente conjunto de pruebas MSE en el eje y.</p>
+<pre class="r"><code>set.seed(19)
+test.err &lt;- rep(NA, length(lambdas))
+for (i in 1:length(lambdas)) {
+    boost.hitters &lt;- gbm(Salary ~ ., data = Hitters.train, distribution = &quot;gaussian&quot;, n.trees = 1000, shrinkage = lambdas[i])
+    yhat &lt;- predict(boost.hitters, Hitters.test, n.trees = 1000)
+    test.err[i] &lt;- mean((yhat - Hitters.test$Salary)^2)
+}
+plot(lambdas, test.err, type = &quot;b&quot;, xlab = &quot;Shrinkage values&quot;, ylab = &quot;Test MSE&quot;)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<pre class="r"><code>min(test.err)</code></pre>
+<pre><code>## [1] 0.256522</code></pre>
+<pre class="r"><code>lambdas[which.min(test.err)]</code></pre>
+<pre><code>## [1] 0.07943282</code></pre>
+<p>De esta manera el minimo MSE es aproximadamente 0.26 y se obtiene para un lambda=0.079</p>
+<p><strong>(e)</strong> Comparar la prueba MSE de potenciación con la prueba MSE que resulta de aplicar dos de los enfoques de regresión que se ven en Capítulos 3 y 6.</p>
+<pre class="r"><code>library(glmnet)</code></pre>
+<pre><code>## Warning: package &#39;glmnet&#39; was built under R version 3.6.3</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## Loaded glmnet 3.0-2</code></pre>
+<pre class="r"><code>fit1 &lt;- lm(Salary ~ ., data = Hitters.train)
+pred1 &lt;- predict(fit1, Hitters.test)
+mean((pred1 - Hitters.test$Salary)^2)</code></pre>
+<pre><code>## [1] 0.4917959</code></pre>
+<pre class="r"><code>x &lt;- model.matrix(Salary ~ ., data = Hitters.train)
+x.test &lt;- model.matrix(Salary ~ ., data = Hitters.test)
+y &lt;- Hitters.train$Salary
+fit2 &lt;- glmnet(x, y, alpha = 0)
+pred2 &lt;- predict(fit2, s = 0.01, newx = x.test)
+mean((pred2 - Hitters.test$Salary)^2)</code></pre>
+<pre><code>## [1] 0.4570283</code></pre>
+<p>Entonces la prueba MSE de potenciación es menor que para regresión lineal y regresión de cresta.</p>
+<p><strong>(f)</strong> Cuáles son las variables que parecen ser los predictores más importantes en el modelo de la promoción?</p>
+<pre class="r"><code>library(gbm)</code></pre>
+<pre class="r"><code>boost.hitters &lt;- gbm(Salary ~ ., data = Hitters.train, distribution = &quot;gaussian&quot;, n.trees = 1000, shrinkage = lambdas[which.min(test.err)])
+summary(boost.hitters)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<pre><code>##                 var    rel.inf
+## CAtBat       CAtBat 22.6464551
+## CRBI           CRBI 10.9778437
+## PutOuts     PutOuts  7.9754321
+## Walks         Walks  7.8359526
+## CHits         CHits  6.1055137
+## Hits           Hits  6.0083357
+## Years         Years  5.7345888
+## CHmRun       CHmRun  5.0230875
+## CWalks       CWalks  5.0102909
+## Assists     Assists  4.6455349
+## AtBat         AtBat  4.1750857
+## HmRun         HmRun  3.5467763
+## RBI             RBI  3.1194651
+## CRuns         CRuns  2.3418632
+## Errors       Errors  1.7908867
+## Runs           Runs  1.7759138
+## Division   Division  0.5895435
+## NewLeague NewLeague  0.4710349
+## League       League  0.2263958</code></pre>
+<p>Finalmente, se observa que la variable “CAtBat” parece ser el predictor mas importante en el modelo de la promoción.</p>
+<p><strong>(g)</strong> Ahora aplique el embolsado al equipo de entrenamiento. ¿Qué es el equipo de prueba MSE para este enfoque?</p>
+<pre class="r"><code>set.seed(19)
+bag.hitters &lt;- randomForest(Salary ~ ., data = Hitters.train, mtry = 19, ntree = 500)
+yhat.bag &lt;- predict(bag.hitters, newdata = Hitters.test)
+mean((yhat.bag - Hitters.test$Salary)^2)</code></pre>
+<pre><code>## [1] 0.2296688</code></pre>
+<p>Así, el MSE para el embolsado al equipo de entrenamiento es 0.23, ligeramente más bajo que el MSE de la prueba de potenciación.</p>
+</div>
+<div id="punto-11" class="section level2">
+<h2>Punto 11</h2>
+<p>Esta pregunta utiliza el conjunto de datos de Caravan.</p>
+<p><strong>(a)</strong> Cree un conjunto de entrenamiento que consta de las primeras 1,000 observaciones, y un conjunto de prueba que consta de las observaciones restantes.</p>
+<pre class="r"><code>set.seed(19)
+train &lt;- 1:1000
+Caravan$Purchase &lt;- ifelse(Caravan$Purchase == &quot;Yes&quot;, 1, 0)
+Caravan.train &lt;- Caravan[train, ]
+Caravan.test &lt;- Caravan[-train, ]</code></pre>
+<p><strong>(b)</strong> Ajustar un modelo de potenciación al conjunto de entrenamiento con “Purchase” como variable respuesta y las otras variables como predictores. Utiliza 1.000 árboles, y un valor de contracción de 0,01. ¿Cual de los predictores parece ser el más importante?</p>
+<pre class="r"><code>set.seed(19)
+boost.caravan &lt;- gbm(Purchase ~ ., data = Caravan.train, distribution = &quot;gaussian&quot;, n.trees = 1000, shrinkage = 0.01)</code></pre>
+<pre><code>## Warning in gbm.fit(x = x, y = y, offset = offset, distribution =
+## distribution, : variable 50: PVRAAUT has no variation.</code></pre>
+<pre><code>## Warning in gbm.fit(x = x, y = y, offset = offset, distribution =
+## distribution, : variable 71: AVRAAUT has no variation.</code></pre>
+<pre class="r"><code>summary(boost.caravan)</code></pre>
+<p><img src="about_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<pre><code>##               var    rel.inf
+## PPERSAUT PPERSAUT 14.0373475
+## MKOOPKLA MKOOPKLA  9.2339247
+## MOPLHOOG MOPLHOOG  6.9853678
+## MBERMIDD MBERMIDD  5.4017973
+## PBRAND     PBRAND  5.3122033
+## MGODGE     MGODGE  4.9332847
+## ABRAND     ABRAND  4.7363042
+## MINK3045 MINK3045  3.8754137
+## MOSTYPE   MOSTYPE  3.7629162
+## MAUT1       MAUT1  2.8127304
+## PWAPART   PWAPART  2.7894790
+## MAUT2       MAUT2  2.5100087
+## MGODPR     MGODPR  2.2915169
+## MSKC         MSKC  2.1303111
+## MBERARBG MBERARBG  2.0547724
+## MINKGEM   MINKGEM  1.9405615
+## MSKB1       MSKB1  1.7985779
+## MSKA         MSKA  1.7963125
+## PBYSTAND PBYSTAND  1.7549661
+## MFWEKIND MFWEKIND  1.6605921
+## MGODOV     MGODOV  1.3738235
+## MRELOV     MRELOV  1.2724410
+## MFGEKIND MFGEKIND  1.1254217
+## MHKOOP     MHKOOP  1.0777335
+## MBERHOOG MBERHOOG  1.0134876
+## MZFONDS   MZFONDS  0.8696404
+## MRELGE     MRELGE  0.8144746
+## MINKM30   MINKM30  0.7963491
+## MINK7512 MINK7512  0.7662992
+## MOPLMIDD MOPLMIDD  0.6483454
+## MGODRK     MGODRK  0.6474206
+## MBERARBO MBERARBO  0.6383682
+## MINK4575 MINK4575  0.6170132
+## MGEMLEEF MGEMLEEF  0.5591457
+## MSKD         MSKD  0.5344524
+## MBERBOER MBERBOER  0.5236652
+## MZPART     MZPART  0.4786901
+## MAUT0       MAUT0  0.4753670
+## MOPLLAAG MOPLLAAG  0.4432628
+## MOSHOOFD MOSHOOFD  0.4348231
+## APERSAUT APERSAUT  0.4147609
+## MINK123M MINK123M  0.4051593
+## PMOTSCO   PMOTSCO  0.3905328
+## MHHUUR     MHHUUR  0.3506464
+## PLEVEN     PLEVEN  0.3198684
+## MFALLEEN MFALLEEN  0.3129696
+## MRELSA     MRELSA  0.2733983
+## MGEMOMV   MGEMOMV  0.2607110
+## MSKB2       MSKB2  0.1942997
+## MBERZELF MBERZELF  0.1490412
+## MAANTHUI MAANTHUI  0.0000000
+## PWABEDR   PWABEDR  0.0000000
+## PWALAND   PWALAND  0.0000000
+## PBESAUT   PBESAUT  0.0000000
+## PVRAAUT   PVRAAUT  0.0000000
+## PAANHANG PAANHANG  0.0000000
+## PTRACTOR PTRACTOR  0.0000000
+## PWERKT     PWERKT  0.0000000
+## PBROM       PBROM  0.0000000
+## PPERSONG PPERSONG  0.0000000
+## PGEZONG   PGEZONG  0.0000000
+## PWAOREG   PWAOREG  0.0000000
+## PZEILPL   PZEILPL  0.0000000
+## PPLEZIER PPLEZIER  0.0000000
+## PFIETS     PFIETS  0.0000000
+## PINBOED   PINBOED  0.0000000
+## AWAPART   AWAPART  0.0000000
+## AWABEDR   AWABEDR  0.0000000
+## AWALAND   AWALAND  0.0000000
+## ABESAUT   ABESAUT  0.0000000
+## AMOTSCO   AMOTSCO  0.0000000
+## AVRAAUT   AVRAAUT  0.0000000
+## AAANHANG AAANHANG  0.0000000
+## ATRACTOR ATRACTOR  0.0000000
+## AWERKT     AWERKT  0.0000000
+## ABROM       ABROM  0.0000000
+## ALEVEN     ALEVEN  0.0000000
+## APERSONG APERSONG  0.0000000
+## AGEZONG   AGEZONG  0.0000000
+## AWAOREG   AWAOREG  0.0000000
+## AZEILPL   AZEILPL  0.0000000
+## APLEZIER APLEZIER  0.0000000
+## AFIETS     AFIETS  0.0000000
+## AINBOED   AINBOED  0.0000000
+## ABYSTAND ABYSTAND  0.0000000</code></pre>
+<p>Despúes de ajustar un modelo de potenciación al conjunto de entrenamiento con “Purchase” como variable respuesta, se obtuvo que la variable predictora más importante es “PPERSAUT”.</p>
+<p><strong>(c)</strong> Utilizar el modelo de potenciación para predecir la respuesta en los datos de la prueba. Predecir que una persona hará una compra si la probabilidad estimada de compra es superior al 20%. Formar una matriz de confusión. ¿Qué fracción de la gente predijo que haría una compra ¿hacen uno de hecho? ¿Cómo se compara esto con los resultados obtenidos al aplicar KNN o regresión logística a estos datos ¿Juego?</p>
+<pre class="r"><code>probs.test &lt;- predict(boost.caravan, Caravan.test, n.trees = 1000, type = &quot;response&quot;)
+pred.test &lt;- ifelse(probs.test &gt; 0.2, 1, 0)
+table(Caravan.test$Purchase, pred.test)</code></pre>
+<pre><code>##    pred.test
+##        0    1
+##   0 4497   36
+##   1  278   11</code></pre>
+<p>Utilizando el modelo de potenciación se obtiene que si la probabilidad de que una persona realice una compra es superior al 20% la fracción de personas es aproximadamente 0.21</p>
+<pre class="r"><code>logit.caravan &lt;- glm(Purchase ~ ., data = Caravan.train, family = &quot;binomial&quot;)</code></pre>
+<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+<pre class="r"><code>probs.test2 &lt;- predict(logit.caravan, Caravan.test, type = &quot;response&quot;)</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre class="r"><code>pred.test2 &lt;- ifelse(probs.test &gt; 0.2, 1, 0)
+table(Caravan.test$Purchase, pred.test2)</code></pre>
+<pre><code>##    pred.test2
+##        0    1
+##   0 4497   36
+##   1  278   11</code></pre>
+<p>Luego, aplicanco regresión logística se obtiene nuevamente una fracción de personas aproximadamente de 0.21.</p>
+</div>
+<div id="punto-12" class="section level2">
+<h2>Punto 12</h2>
+<p>Aplicar el aumento, el embolsamiento y los bosques aleatorios a un conjunto de datos de su elección. Asegúrate de que los modelos encajen en un conjunto de entrenamiento y de que evalúen su rendimiento en un equipo de prueba. ¿Cómo de precisos son los resultados comparados a métodos simples como la regresión lineal o logística? ¿Cuál de estos que los enfoques de la investigación dan el mejor resultado?</p>
+<p>Primero, utilizando el conjunto de datos “Weekly” del paquete “ISLR” para predecir la variable “Direction”.</p>
+<pre class="r"><code>library(gbm)
+set.seed(19)
+train &lt;- sample(nrow(Weekly), nrow(Weekly) / 2)
+Weekly$Direction &lt;- ifelse(Weekly$Direction == &quot;Up&quot;, 1, 0)
+Weekly.train &lt;- Weekly[train, ]
+Weekly.test &lt;- Weekly[-train, ]</code></pre>
+<p>Aplicando regresión logística:</p>
+<pre class="r"><code>logit.fit &lt;- glm(Direction ~ . - Year - Today, data = Weekly.train, family = &quot;binomial&quot;)
+logit.probs &lt;- predict(logit.fit, newdata = Weekly.test, type = &quot;response&quot;)
+logit.pred &lt;- ifelse(logit.probs &gt; 0.5, 1, 0)
+table(Weekly.test$Direction, logit.pred)</code></pre>
+<pre><code>##    logit.pred
+##       0   1
+##   0  46 188
+##   1  69 242</code></pre>
+<pre class="r"><code>boost.fit &lt;- gbm(Direction ~ . - Year - Today, data = Weekly.train, distribution = &quot;bernoulli&quot;, n.trees = 5000)
+boost.probs &lt;- predict(boost.fit, newdata = Weekly.test, n.trees = 5000)
+boost.pred &lt;- ifelse(boost.probs &gt; 0.5, 1, 0)
+table(Weekly.test$Direction, boost.pred)</code></pre>
+<pre><code>##    boost.pred
+##       0   1
+##   0 132 102
+##   1 159 152</code></pre>
+<pre class="r"><code>bag.fit &lt;- randomForest(Direction ~ . - Year - Today, data = Weekly.train, mtry = 6)</code></pre>
+<pre><code>## Warning in randomForest.default(m, y, ...): The response has five or fewer
+## unique values. Are you sure you want to do regression?</code></pre>
+<pre class="r"><code>bag.probs &lt;- predict(bag.fit, newdata = Weekly.test)
+bag.pred &lt;- ifelse(bag.probs &gt; 0.5, 1, 0)
+table(Weekly.test$Direction, bag.pred)</code></pre>
+<pre><code>##    bag.pred
+##       0   1
+##   0 100 134
+##   1 118 193</code></pre>
+<pre class="r"><code>rf.fit &lt;- randomForest(Direction ~ . - Year - Today, data = Weekly.train, mtry = 2)</code></pre>
+<pre><code>## Warning in randomForest.default(m, y, ...): The response has five or fewer
+## unique values. Are you sure you want to do regression?</code></pre>
+<pre class="r"><code>rf.probs &lt;- predict(rf.fit, newdata = Weekly.test)
+rf.pred &lt;- ifelse(rf.probs &gt; 0.5, 1, 0)
+table(Weekly.test$Direction, rf.pred)</code></pre>
+<pre><code>##    rf.pred
+##       0   1
+##   0  99 135
+##   1 118 193</code></pre>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

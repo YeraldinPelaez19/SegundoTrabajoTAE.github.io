@@ -1,0 +1,423 @@
+# {.tabset .tabset-fade .tabset-pills}
+## Punto 7
+
+En el laboratorio, aplicamos bosques aleatorios a los datos de Boston usando mtry=6 y usando ntree=25 y ntree=500. Crear un gráfico que muestre la prueba error resultante de los bosques aleatorios en este conjunto de datos para un rango de valores para mtry y ntree. Puedes modelar tu trazar después de la figura 8.10. Describa los resultados obtenidos.
+
+
+```{r}
+library(MASS)
+library(randomForest)
+```
+
+```{r}
+set.seed(19)
+train <- sample(1:nrow(Boston), nrow(Boston) / 2)
+Boston.train <- Boston[train, -14]
+Boston.test <- Boston[-train, -14]
+Y.train <- Boston[train, 14]
+Y.test <- Boston[-train, 14]
+rf.boston1 <- randomForest(Boston.train, y = Y.train, xtest = Boston.test, ytest = Y.test, mtry = ncol(Boston) - 1, ntree = 500)
+rf.boston2 <- randomForest(Boston.train, y = Y.train, xtest = Boston.test, ytest = Y.test, mtry = (ncol(Boston) - 1) / 2, ntree = 500)
+rf.boston3 <- randomForest(Boston.train, y = Y.train, xtest = Boston.test, ytest = Y.test, mtry = sqrt(ncol(Boston) - 1), ntree = 500)
+plot(1:500, rf.boston1$test$mse, col = "green", type = "l", xlab = "Number of Trees", ylab = "Test MSE", ylim = c(10, 19))
+lines(1:500, rf.boston2$test$mse, col = "red", type = "l")
+lines(1:500, rf.boston3$test$mse, col = "blue", type = "l")
+legend("topright", c("m = p", "m = p/2", "m = sqrt(p)"), col = c("green", "red", "blue"), cex = 1, lty = 1)
+```
+
+
+## Punto 8
+En el laboratorio, se aplicó un árbol de clasificación al conjunto de datos de Carseats después de convirtiendo a Sales en una variable de respuesta cualitativa. Ahora vamos a tratan de predecir las Sales utilizando árboles de regresión y enfoques relacionados, tratando la respuesta como una variable cuantitativa.
+
+**(a)** Dividir el conjunto de datos en un conjunto de entrenamiento y un conjunto de pruebas.
+
+```{r}
+library(ISLR)
+set.seed(19)
+train <- sample(1:nrow(Carseats), nrow(Carseats) / 2)
+Carseats.train <- Carseats[train, ]
+Carseats.test <- Carseats[-train, ]
+```
+
+
+**(b)** Ajustar un árbol de regresión al conjunto de entrenamiento. Trazar el árbol e interpretar los resultados. ¿Qué prueba de MSE obtiene?
+
+```{r}
+library(tree)
+tree.carseats <- tree(Sales ~ ., data = Carseats.train)
+summary(tree.carseats)
+```
+
+```{r}
+plot(tree.carseats)
+text(tree.carseats, pretty = 0)
+```
+
+```{r}
+yhat <- predict(tree.carseats, newdata = Carseats.test)
+mean((yhat - Carseats.test$Sales)^2)
+```
+En este caso para el árbol de regresión generado por el conjunto de entrenamiento se obtuvo un MSE de aproximadamente 4.77
+
+**(c)** Utilizar la validación cruzada para determinar el nivel óptimo de la complejidad de los árboles. ¿La poda del árbol mejora la prueba de MSE?
+
+```{r}
+cv.carseats <- cv.tree(tree.carseats)
+plot(cv.carseats$size, cv.carseats$dev, type = "b")
+tree.min <- which.min(cv.carseats$dev)
+points(tree.min, cv.carseats$dev[tree.min], col = "red", cex = 2, pch = 20)
+```
+
+```{r}
+prune.carseats <- prune.tree(tree.carseats, best = 4)
+plot(prune.carseats)
+text(prune.carseats, pretty = 0)
+```
+
+En este caso, al utilizar validación cruzada se selecciona árbol de tamaño 4. Ahora, se procede a obtener el árbol de 4 nodos.
+
+```{r}
+yhat <- predict(prune.carseats, newdata = Carseats.test)
+mean((yhat - Carseats.test$Sales)^2)
+```
+Luego podemos ver que reducir el árbol a 4 nodos aumenta el MSE a 5.92.
+
+**(d)** Utilizar el método de embolsado para analizar estos datos. ¿Qué prueba de MSE que obtiene? Use la función importance() para determinar qué variables son más importantes.
+
+```{r}
+bag.carseats <- randomForest(Sales ~ ., data = Carseats.train, mtry = 10, ntree = 500, importance = TRUE)
+yhat.bag <- predict(bag.carseats, newdata = Carseats.test)
+mean((yhat.bag - Carseats.test$Sales)^2)
+```
+Se obeserva que el método de embolsado arroja un MSE de aproximadamente 2.75
+
+```{r}
+importance(bag.carseats)
+```
+Ademas, se puede concluir que las variables “ShelveLoc” y “Price” son las mas importantes.
+
+**(e)** Utilizar los bosques al azar para analizar estos datos. ¿Qué prueba de MSE obtener? Use la función importance() para determinar qué variables son muy importantes. Describa el efecto de m, el número de variables consideradas en cada división, en la tasa de error obtenido.
+
+```{r}
+rf.carseats <- randomForest(Sales ~ ., data = Carseats.train, mtry = 3, ntree = 500, importance = TRUE)
+yhat.rf <- predict(rf.carseats, newdata = Carseats.test)
+mean((yhat.rf - Carseats.test$Sales)^2)
+```
+En este caso, para m=sqrt(p) se obtiene un MSE de aproximadamente 2.87
+
+```{r}
+importance(rf.carseats)
+```
+Acá tambien se puede concluir que las variables “ShelveLoc” y “Price” son las mas importantes.
+
+## Punto 9
+Este problema involucra al conjunto de datos del "OJ"" que es parte del paquete ISLR .
+
+**(a)** Crear un conjunto de entrenamiento que contenga una muestra aleatoria de 800 observaciones, y un conjunto de prueba que contenga las observaciones restantes.
+
+```{r}
+set.seed(19)
+train <- sample(1:nrow(OJ), 800)
+OJ.train <- OJ[train, ]
+OJ.test <- OJ[-train, ]
+```
+
+
+**(b)** Ajustar un árbol a los datos de entrenamiento, con la respuesta "Purchase" y las otras variables como predictores. Utilice la función summary() para producir estadísticas resumidas sobre el árbol, y describir la resultados obtenidos. ¿Cuál es la tasa de error de entrenamiento? ¿Cuántos nodos terminales que tiene el árbol?
+
+```{r}
+tree.oj <- tree(Purchase ~ ., data = OJ.train)
+summary(tree.oj)
+```
+
+Se puede observar que el árbol ajustado posee 9 nodos terminales y una tasa de error de entrenamiento igual a 0.1612
+
+
+**(c)** Escriba el nombre del objeto del árbol para obtener una descripción detallada salida de texto. Escoge uno de los nodos terminales, e interpreta la información que se muestra.
+
+```{r}
+tree.oj
+```
+
+Escogemos el nodo etiquetado como 4, que es un nodo terminal debido al asterisco. El criterio de división es LoyalCH <0.0356415, el número de observaciones en esa rama es igual a 56 con una desviación de 0 y una predicción general para la rama de MM. El 0% de las observaciones en esa rama toman el valor de CH, y el 100% restante toma el valor de MM.
+
+**(d)** Crear un gráfico del árbol e interpretar los resultados.
+
+```{r}
+plot(tree.oj)
+text(tree.oj, pretty = 0)
+```
+
+Podemos ver que el indicador más importante de "Purchase" parece ser "Loyalch", de hecho, los nodos superiores contienen "Loyalch".
+
+**(e)** Predecir la respuesta en los datos de la prueba, y producir una matriz de confusión que compara las etiquetas de las pruebas con las etiquetas de las pruebas previstas. ¿Cuál es la tasa de error de la prueba?
+
+```{r}
+tree.pred <- predict(tree.oj, OJ.test, type = "class")
+table(tree.pred, OJ.test$Purchase)
+```
+
+```{r}
+1 - (147 + 62) / 270
+```
+Podemos concluir que la tasa de error de la prueba es de aproximadamente 23%.
+
+**(f)** Aplicar la función cv.tree() al conjunto de entrenamiento para determinar el tamaño óptimo del árbol.
+
+```{r}
+cv.oj <- cv.tree(tree.oj, FUN = prune.misclass)
+cv.oj
+```
+
+
+**(g)** Elaborar un gráfico con el tamaño del árbol en el eje x y la tasa de error de clasificación en la validación cruzada en el eje Y.
+
+```{r}
+plot(cv.oj$size, cv.oj$dev, type = "b", xlab = "Tree size", ylab = "Deviance")
+```
+
+**(h)** ¿Qué tamaño de árbol corresponde a la tasa de error de clasificación en la validación cruzada mas baja?
+
+Podemos ver que el árbol de 5 nodos es el árbol más pequeño con la tasa de error de clasificación más baja.
+
+**(i)** Producir un árbol podado que corresponda al tamaño óptimo del árbol obtenido mediante validación cruzada. Si la validación cruzada no conduce a la selección de un árbol podado, luego crear un árbol podado con cinco nodos terminales.
+
+```{r}
+prune.oj <- prune.misclass(tree.oj, best = 5)
+plot(prune.oj)
+text(prune.oj, pretty = 0)
+```
+
+**(j)** Comparar las tasas de error de entrenamiento entre los podados y los no podados árboles. ¿Cuál es más alto?
+
+```{r}
+summary(tree.oj)
+```
+
+```{r}
+summary(prune.oj)
+```
+
+La tasa de error de clasificación errónea es ligeramente mayor para el árbol podado (0.1713 frente a 0.1612).
+
+**(k)** Comparar los índices de error de la prueba entre los podados y los no podados árboles. ¿Cuál es más alto?
+
+
+```{r}
+prune.pred <- predict(prune.oj, OJ.test, type = "class")
+table(prune.pred, OJ.test$Purchase)
+```
+
+
+```{r}
+1 - (119 + 81) / 270
+```
+
+Se concluye que pare este caso, el proceso de poda del árbol aumenta la tasa de error de prueba a aproximadamente 26%, pero arroja un árbol mucho más facil de interpretar.
+
+## Punto 10
+Ahora usamos el aumento para predecir el Salary en el conjunto de datos de los Hitters.
+
+**(a)** Eliminar las observaciones para las que la información de salarios es desconocida, y luego log-transformar los salarios.
+
+```{r}
+Hitters <- na.omit(Hitters)
+Hitters$Salary <- log(Hitters$Salary)
+```
+
+
+**(b)** Crear un conjunto de entrenamiento que consista en las primeras 200 observaciones, y un conjunto de pruebas que consiste en las observaciones restantes.
+
+```{r}
+train <- 1:200
+Hitters.train <- Hitters[train, ]
+Hitters.test <- Hitters[-train, ]
+```
+
+
+**(c)** Realizar la potenciación del conjunto de entrenamiento con 1.000 árboles para un rango de valores del parámetro de contracción λ. Producir un gráfico con diferentes valores de contracción en el eje x y los correspondientes El entrenamiento fijó el MSE en el eje Y.
+
+```{r}
+library(gbm)
+set.seed(19)
+pows <- seq(-10, -0.2, by = 0.1)
+lambdas <- 10^pows
+train.err <- rep(NA, length(lambdas))
+for (i in 1:length(lambdas)) {
+    boost.hitters <- gbm(Salary ~ ., data = Hitters.train, distribution = "gaussian", n.trees = 1000, shrinkage = lambdas[i])
+    pred.train <- predict(boost.hitters, Hitters.train, n.trees = 1000)
+    train.err[i] <- mean((pred.train - Hitters.train$Salary)^2)
+}
+plot(lambdas, train.err, type = "b", xlab = "Shrinkage values", ylab = "Training MSE")
+```
+
+**(d)** Producir un gráfico con diferentes valores de contracción en el eje x y el correspondiente conjunto de pruebas MSE en el eje y.
+
+```{r}
+set.seed(19)
+test.err <- rep(NA, length(lambdas))
+for (i in 1:length(lambdas)) {
+    boost.hitters <- gbm(Salary ~ ., data = Hitters.train, distribution = "gaussian", n.trees = 1000, shrinkage = lambdas[i])
+    yhat <- predict(boost.hitters, Hitters.test, n.trees = 1000)
+    test.err[i] <- mean((yhat - Hitters.test$Salary)^2)
+}
+plot(lambdas, test.err, type = "b", xlab = "Shrinkage values", ylab = "Test MSE")
+```
+
+```{r}
+min(test.err)
+```
+
+```{r}
+lambdas[which.min(test.err)]
+```
+
+De esta manera el minimo MSE es aproximadamente 0.26 y se obtiene para un lambda=0.079
+
+
+**(e)** Comparar la prueba MSE de potenciación con la prueba MSE que resulta de aplicar dos de los enfoques de regresión que se ven en Capítulos 3 y 6.
+
+
+```{r}
+library(glmnet)
+fit1 <- lm(Salary ~ ., data = Hitters.train)
+pred1 <- predict(fit1, Hitters.test)
+mean((pred1 - Hitters.test$Salary)^2)
+```
+
+```{r}
+x <- model.matrix(Salary ~ ., data = Hitters.train)
+x.test <- model.matrix(Salary ~ ., data = Hitters.test)
+y <- Hitters.train$Salary
+fit2 <- glmnet(x, y, alpha = 0)
+pred2 <- predict(fit2, s = 0.01, newx = x.test)
+mean((pred2 - Hitters.test$Salary)^2)
+```
+
+Entonces la prueba MSE de potenciación es menor que para regresión lineal y regresión de cresta.
+
+**(f)** Cuáles son las variables que parecen ser los predictores más importantes en el modelo de la promoción?
+
+```{r}
+library(gbm)
+```
+
+```{r}
+boost.hitters <- gbm(Salary ~ ., data = Hitters.train, distribution = "gaussian", n.trees = 1000, shrinkage = lambdas[which.min(test.err)])
+summary(boost.hitters)
+```
+
+Finalmente, se observa que la variable "CAtBat" parece ser el predictor mas importante en el modelo de la promoción.
+
+**(g)** Ahora aplique el embolsado al equipo de entrenamiento. ¿Qué es el equipo de prueba MSE para este enfoque?
+
+```{r}
+set.seed(19)
+bag.hitters <- randomForest(Salary ~ ., data = Hitters.train, mtry = 19, ntree = 500)
+yhat.bag <- predict(bag.hitters, newdata = Hitters.test)
+mean((yhat.bag - Hitters.test$Salary)^2)
+```
+
+Así, el MSE para el embolsado al equipo de entrenamiento es 0.23, ligeramente más bajo que el MSE de la prueba de potenciación. 
+
+## Punto 11
+Esta pregunta utiliza el conjunto de datos de Caravan. 
+
+**(a)** Cree un conjunto de entrenamiento que consta de las primeras 1,000 observaciones, y un conjunto de prueba que consta de las observaciones restantes.
+
+```{r}
+set.seed(19)
+train <- 1:1000
+Caravan$Purchase <- ifelse(Caravan$Purchase == "Yes", 1, 0)
+Caravan.train <- Caravan[train, ]
+Caravan.test <- Caravan[-train, ]
+```
+
+
+**(b)** Ajustar un modelo de potenciación al conjunto de entrenamiento con “Purchase”  como variable respuesta y las otras variables como predictores. Utiliza 1.000 árboles, y un valor de contracción de 0,01. ¿Cual de los predictores parece ser el más importante?
+
+```{r}
+set.seed(19)
+boost.caravan <- gbm(Purchase ~ ., data = Caravan.train, distribution = "gaussian", n.trees = 1000, shrinkage = 0.01)
+```
+
+```{r}
+summary(boost.caravan)
+```
+Despúes de ajustar un modelo de potenciación al conjunto de entrenamiento con “Purchase” como variable respuesta, se obtuvo que la variable predictora más importante es "PPERSAUT".
+
+**(c)** Utilizar el modelo de potenciación para predecir la respuesta en los datos de la prueba. Predecir que una persona hará una compra si la probabilidad estimada de compra es superior al 20%. Formar una matriz de confusión. ¿Qué fracción de la gente predijo que haría una compra ¿hacen uno de hecho? ¿Cómo se compara esto con los resultados obtenidos al aplicar KNN o regresión logística a estos datos ¿Juego?
+
+```{r}
+probs.test <- predict(boost.caravan, Caravan.test, n.trees = 1000, type = "response")
+pred.test <- ifelse(probs.test > 0.2, 1, 0)
+table(Caravan.test$Purchase, pred.test)
+```
+
+Utilizando el modelo de potenciación se obtiene que si la probabilidad de que una persona realice una compra es superior al 20% la fracción de personas es aproximadamente 0.21
+
+```{r}
+logit.caravan <- glm(Purchase ~ ., data = Caravan.train, family = "binomial")
+```
+
+```{r}
+probs.test2 <- predict(logit.caravan, Caravan.test, type = "response")
+```
+
+```{r}
+pred.test2 <- ifelse(probs.test > 0.2, 1, 0)
+table(Caravan.test$Purchase, pred.test2)
+```
+
+Luego, aplicanco regresión logística se obtiene nuevamente una fracción de personas aproximadamente de 0.21.
+
+## Punto 12
+Aplicar el aumento, el embolsamiento y los bosques aleatorios a un conjunto de datos de su elección. Asegúrate de que los modelos encajen en un conjunto de entrenamiento y de que evalúen su rendimiento en un equipo de prueba. ¿Cómo de precisos son los resultados comparados a métodos simples como la regresión lineal o logística? ¿Cuál de estos que los enfoques de la investigación dan el mejor resultado?
+
+Primero, utilizando el conjunto de datos “Weekly” del paquete "ISLR" para predecir la variable “Direction”.
+
+```{r}
+library(gbm)
+set.seed(19)
+train <- sample(nrow(Weekly), nrow(Weekly) / 2)
+Weekly$Direction <- ifelse(Weekly$Direction == "Up", 1, 0)
+Weekly.train <- Weekly[train, ]
+Weekly.test <- Weekly[-train, ]
+```
+
+Aplicando regresión logística:
+
+```{r}
+logit.fit <- glm(Direction ~ . - Year - Today, data = Weekly.train, family = "binomial")
+logit.probs <- predict(logit.fit, newdata = Weekly.test, type = "response")
+logit.pred <- ifelse(logit.probs > 0.5, 1, 0)
+table(Weekly.test$Direction, logit.pred)
+```
+
+
+```{r}
+boost.fit <- gbm(Direction ~ . - Year - Today, data = Weekly.train, distribution = "bernoulli", n.trees = 5000)
+boost.probs <- predict(boost.fit, newdata = Weekly.test, n.trees = 5000)
+boost.pred <- ifelse(boost.probs > 0.5, 1, 0)
+table(Weekly.test$Direction, boost.pred)
+```
+
+```{r}
+bag.fit <- randomForest(Direction ~ . - Year - Today, data = Weekly.train, mtry = 6)
+```
+
+```{r}
+bag.probs <- predict(bag.fit, newdata = Weekly.test)
+bag.pred <- ifelse(bag.probs > 0.5, 1, 0)
+table(Weekly.test$Direction, bag.pred)
+```
+
+```{r}
+rf.fit <- randomForest(Direction ~ . - Year - Today, data = Weekly.train, mtry = 2)
+```
+
+```{r}
+rf.probs <- predict(rf.fit, newdata = Weekly.test)
+rf.pred <- ifelse(rf.probs > 0.5, 1, 0)
+table(Weekly.test$Direction, rf.pred)
+```
