@@ -598,9 +598,8 @@ data.frame(cost = costs, misclass = test.err)</code></pre>
 <h2>Punto 7</h2>
 <p>En este problema, se utilizarán los enfoques de los vectores de apoyo a fin de predecir si un coche determinado tiene un alto o bajo kilometraje de gasolina basado en la Conjunto de datos automático.</p>
 <p><strong>(a)</strong> Crear una variable binaria que toma un 1 para los coches con gasolina el kilometraje por encima de la mediana, y un 0 para los coches con kilometraje de gasolina por debajo de la media.</p>
-<pre class="r"><code>library(ISLR)</code></pre>
-<pre><code>## Warning: package &#39;ISLR&#39; was built under R version 3.6.3</code></pre>
-<pre class="r"><code>var &lt;- ifelse(Auto$mpg &gt; median(Auto$mpg), 1, 0)
+<pre class="r"><code>library(ISLR)
+var &lt;- ifelse(Auto$mpg &gt; median(Auto$mpg), 1, 0)
 Auto$mpglevel &lt;- as.factor(var)</code></pre>
 <p><strong>(b)</strong> Ajustar un clasificador de vectores de apoyo a los datos con diversos valores del costo, para predecir si un coche tiene alta o baja gasolina kilometraje. Reporte los errores de validación cruzada asociados con diferentes valores de este parámetro. Comente sus resultados.</p>
 <pre class="r"><code>set.seed(19)
